@@ -236,17 +236,12 @@ AlwaysBuild(target_program)
 # Target: Setup fuses
 #
 
-if "BOARD" in env and "fuses" in env.BoardConfig():
-    env.Replace(FUSESCMD=" ".join(
-        ["avrdude", "$UPLOADERFLAGS", "-e"] +
-        ["-U%s:w:%s:m" % (k, v)
-         for k, v in env.BoardConfig().get("fuses", {}).items()]
-    ))
-
+if "fuses" in COMMAND_LINE_TARGETS:
+    env.SConscript("fuses.py", exports="env")
     target_fuses = env.Alias(
         "fuses", None,
         [env.VerboseAction(BeforeUpload, "Looking for upload port..."),
-         env.VerboseAction("$FUSESCMD", "Setting FUSEs")])
+         env.VerboseAction("$FUSESCMD", "Setting fuses")])
     AlwaysBuild(target_fuses)
 
 #
