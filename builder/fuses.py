@@ -223,12 +223,14 @@ print("Target configuration:")
 print("Clock speed = %s, Oscillator = %s, BOD level = %s, UART port = %s, Save EEPROM = %s" % (
     f_cpu, oscillator, bod, uart, eesave))
 
-lfuse = board.get("fuses.low_fuses") if board.get("fuses.lfuse", "") else hex(
+lfuse = board.get("fuses.low_fuses") if board.get(
+    "fuses.low_fuses", "") else hex(
     get_lfuse(target, f_cpu, oscillator, bod, eesave))
-hfuse = board.get("fuses.high_fuses") if board.get("fuses.hfuse", "") else hex(
+hfuse = board.get("fuses.high_fuses") if board.get(
+    "fuses.high_fuses", "") else hex(
     get_hfuse(target, uart, oscillator, bod, eesave))
 efuse = board.get("fuses.extended_fuses") if board.get(
-    "fuses.efuse", "") else get_efuse(target, uart, bod)
+    "fuses.extended_fuses", "") else get_efuse(target, uart, bod)
 lock = board.get("fuses.lock", "0x3f")
 
 fuses_cmd = [
