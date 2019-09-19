@@ -1,35 +1,36 @@
+import sys
+
+from SCons.Script import Import, Return
+
 Import("env")
 
 
-def get_lfuse(mcu, f_cpu, oscillator, bod, eesave):
-    mcus_1 = (
+def get_lfuse(target, f_cpu, oscillator, bod, eesave):
+    targets_1 = (
         "atmega2561", "atmega2560", "atmega1284", "atmega1284p", "atmega1281",
         "atmega1280", "atmega644a", "atmega644p", "atmega640", "atmega328",
         "atmega328p", "atmega324a", "atmega324p", "atmega324pa", "atmega168",
         "atmega168p", "atmega164a", "atmega164p", "atmega88", "atmega88p",
         "atmega48", "atmega48p")
-
-    mcus_2 = (
+    targets_2 = (
         "atmega328pb", "atmega324pb", "atmega168pb", "atmega162", "atmega88pb",
         "atmega48pb", "at90can128", "at90can64", "at90can32")
+    targets_3 = ("atmega8535", "atmega8515", "atmega32", "atmega16", "atmega8")
+    targets_4 = ("attiny13", "attiny13a")
 
-    mcus_3 = ("atmega8535", "atmega8515", "atmega32", "atmega16", "atmega8")
-
-    mcus_4 = ("attiny13", "attiny13a")
-
-    if mcu in mcus_1:
+    if target in targets_1:
         if oscillator == "external":
             return 0xf7
         else:
             return 0xe2 if f_cpu == "8000000L" else 0x62
 
-    elif mcu in mcus_2:
+    elif target in targets_2:
         if oscillator == "external":
             return 0xff
         else:
             return 0xe2 if f_cpu == "8000000L" else 0x62
 
-    elif mcu in mcus_3:
+    elif target in targets_3:
         if bod == "4.0v":
             bod_bits = 0b11
         elif bod == "2.7v":
@@ -46,7 +47,7 @@ def get_lfuse(mcu, f_cpu, oscillator, bod, eesave):
             else:
                 return 0xe1 & ~ bod_offset
 
-    elif mcu in mcus_4:
+    elif target in targets_4:
         eesave_bit = 1 if eesave == "yes" else 0
         eesave_offset = eesave_bit << 6
         if oscillator == "external":
@@ -66,45 +67,40 @@ def get_lfuse(mcu, f_cpu, oscillator, bod, eesave):
                 return 0x6b & ~ eesave_offset
 
     else:
-        print("Error: Couldn't calculate lfuse for %s" % mcu)
+        sys.stderr.write("Error: Couldn't calculate lfuse for %s\n" % target)
         env.Exit(1)
 
 
-def get_hfuse(mcu, uart, oscillator, bod, eesave):
-    mcus_1 = (
+def get_hfuse(target, uart, oscillator, bod, eesave):
+    targets_1 = (
         "atmega2561", "atmega2560", "atmega1284", "atmega1284p",
         "atmega1281", "atmega1280", "atmega644a", "atmega644p",
         "atmega640", "atmega328", "atmega328p", "atmega328pb",
         "atmega324a", "atmega324p", "atmega324pa", "atmega324pb",
         "at90can128", "at90can64", "at90can32")
-
-    mcus_2 = ("atmega164a", "atmega164p", "atmega162")
-
-    mcus_3 = (
+    targets_2 = ("atmega164a", "atmega164p", "atmega162")
+    targets_3 = (
         "atmega168", "atmega168p", "atmega168pb", "atmega88", "atmega88p",
         "atmega88pb", "atmega48", "atmega48p", "atmega48pb")
-
-    mcus_4 = ("atmega128", "atmega64", "atmega32")
-
-    mcus_5 = ("atmega8535", "atmega8515", "atmega16", "atmega8")
-
-    mcus_6 = ("attiny13", "attiny13a")
+    targets_4 = ("atmega128", "atmega64", "atmega32")
+    targets_5 = ("atmega8535", "atmega8515", "atmega16", "atmega8")
+    targets_6 = ("attiny13", "attiny13a")
 
     eesave_bit = 1 if eesave == "yes" else 0
     eesave_offset = eesave_bit << 3
     ckopt_bit = 1 if oscillator == "external" else 0
     ckopt_offset = ckopt_bit << 4
-    if mcu in mcus_1:
+    if target in targets_1:
         if uart == "no_bootloader":
             return 0xdf & ~ eesave_offset
         else:
             return 0xde & ~ eesave_offset
-    elif mcu in mcus_2:
+    elif target in targets_2:
         if uart == "no_bootloader":
             return 0xdd & ~ eesave_offset
         else:
             return 0xdc & ~ eesave_offset
-    elif mcu in mcus_3:
+    elif target in targets_3:
         if bod == "4.3v":
             return 0xdc & ~ eesave_offset
         elif bod == "2.7v":
@@ -113,17 +109,17 @@ def get_hfuse(mcu, uart, oscillator, bod, eesave):
             return 0xde & ~ eesave_offset
         else:
             return 0xdf & ~ eesave_offset
-    elif mcu in mcus_4:
+    elif target in targets_4:
         if uart == "no_bootloader":
             return (0xdf & ~ ckopt_offset) & ~ eesave_offset
         else:
             return (0xde & ~ ckopt_offset) & ~ eesave_offset
-    elif mcu in mcus_5:
+    elif target in targets_5:
         if uart == "no_bootloader":
             return (0xdd & ~ ckopt_offset) & ~ eesave_offset
         else:
             return (0xdc & ~ ckopt_offset) & ~ eesave_offset
-    elif mcu in mcus_6:
+    elif target in targets_6:
         if bod == "4.3v":
             return 0x9
         elif bod == "2.7v":
@@ -134,7 +130,7 @@ def get_hfuse(mcu, uart, oscillator, bod, eesave):
             return 0xff
 
     else:
-        print("Error: Couldn't calculate hfuse for %s" % mcu)
+        sys.stderr.write("Error: Couldn't calculate hfuse for %s\n" % target)
         env.Exit(1)
 
 
@@ -145,16 +141,18 @@ def get_efuse(mcu, uart, bod):
         "atmega1281", "atmega1280", "atmega644a", "atmega644p",
         "atmega640", "atmega328", "atmega328p", "atmega324a",
         "atmega324p", "atmega324pa", "atmega164a", "atmega164p")
-
     mcus_2 = ("atmega328pb", "atmega324pb")
-
     mcus_3 = (
         "atmega168", "atmega168p", "atmega168pb", "atmega88",
         "atmega88p", "atmega88pb")
-
     mcus_4 = ("atmega128", "atmega64", "atmega48", "atmega48p")
-
     mcus_5 = ("at90can128", "at90can64", "at90can32")
+
+    mcu_without_efuse = ("atmega8535", "atmega8515", "atmega8", "atmega16",
+        "atmega32")
+
+    if mcu in mcu_without_efuse:
+        return None
 
     if mcu in mcus_1:
         if bod == "4.3v":
@@ -201,12 +199,20 @@ def get_efuse(mcu, uart, bod):
             return 0xff
 
     else:
-        print("Error: Couldn't calculate efuse for %s" % mcu)
+        sys.stderr.write("Error: Couldn't calculate efuse for %s\n" % mcu)
         env.Exit(1)
 
 
 board = env.BoardConfig()
-mcu = board.get("build.mcu", "").lower()
+
+# At the moment programming custom fuses is available for several cores
+if board.get("build.core", "") not in ("MiniCore", "MegaCore", "MightyCore"):
+    sys.stderr.write("Error: fuse programming for %s is not supported.\n" %
+                     env.subst("$BOARD"))
+    env.Exit(1)
+
+target = board.get("build.mcu").lower() if board.get(
+    "build.mcu", "") else env.subst("$BOARD").lower()
 f_cpu = board.get("build.f_cpu", "16000000L").upper()
 oscillator = board.get("hardware.oscillator", "external").lower()
 bod = board.get("hardware.bod", "2.7v").lower()
@@ -217,20 +223,28 @@ print("Target configuration:")
 print("Clock speed = %s, Oscillator = %s, BOD level = %s, UART port = %s, Save EEPROM = %s" % (
     f_cpu, oscillator, bod, uart, eesave))
 
-lfuse = board.get("fuses.lfuse") if board.get("fuses.lfuse", "") else hex(
-    get_lfuse(mcu, f_cpu, oscillator, bod, eesave))
-hfuse = board.get("fuses.hfuse") if board.get("fuses.hfuse", "") else hex(
-    get_hfuse(mcu, uart, oscillator, bod, eesave))
-efuse = board.get("fuses.efuse") if board.get("fuses.efuse", "") else hex(
-    get_efuse(mcu, uart, bod))
+lfuse = board.get("fuses.low_fuses") if board.get("fuses.lfuse", "") else hex(
+    get_lfuse(target, f_cpu, oscillator, bod, eesave))
+hfuse = board.get("fuses.high_fuses") if board.get("fuses.hfuse", "") else hex(
+    get_hfuse(target, uart, oscillator, bod, eesave))
+efuse = board.get("fuses.extended_fuses") if board.get(
+    "fuses.efuse", "") else get_efuse(target, uart, bod)
 lock = board.get("fuses.lock", "0x3f")
 
-print("Calculated fuses: [lock = %s, lfuse = %s, hfuse = %s, efuse = %s]" % (
-    lock, lfuse, hfuse, efuse))
-
-env.Replace(FUSESCMD=" ".join(["avrdude", "$UPLOADERFLAGS"] + [
-    "-Ulock:w:%s:m" % lock,
-    "-Uefuse:w:%s:m" % efuse,
+fuses_cmd = [
+    "avrdude", "$UPLOADERFLAGS", "-b", "$UPLOAD_SPEED", "-P", '"$UPLOAD_PORT"',
+    "-e", "-Ulock:w:%s:m" % lock,
     "-Uhfuse:w:%s:m" % hfuse,
     "-Ulfuse:w:%s:m" % lfuse
-]))
+]
+
+if efuse:
+    efuse = efuse if isinstance(efuse, str) else hex(efuse)
+    fuses_cmd.append("-Uefuse:w:%s:m" % efuse)
+
+print("Selected fuses: [lfuse = %s, hfuse = %s%s]" % (
+    lfuse, hfuse, ", efuse = %s" % efuse if efuse else ""))
+
+fuses_action = env.VerboseAction(" ".join(fuses_cmd), "Setting fuses")
+
+Return("fuses_action")

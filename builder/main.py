@@ -237,12 +237,24 @@ AlwaysBuild(target_program)
 #
 
 if "fuses" in COMMAND_LINE_TARGETS:
-    env.SConscript("fuses.py", exports="env")
-    target_fuses = env.Alias(
-        "fuses", None,
-        [env.VerboseAction(BeforeUpload, "Looking for upload port..."),
-         env.VerboseAction("$FUSESCMD", "Setting fuses")])
+    fuses_action = env.SConscript("fuses.py", exports="env")
+    target_fuses = env.Alias("fuses", None, [
+        env.VerboseAction(
+            env.AutodetectUploadPort, "Looking for upload port..."),
+        fuses_action
+    ])
     AlwaysBuild(target_fuses)
+
+#
+# Target: Upload bootloader
+#
+
+if "bootloader" in COMMAND_LINE_TARGETS:
+    bootloader_actions = env.SConscript("bootloader.py", exports="env")
+    target_bootloader = env.Alias("bootloader", None, [
+        env.VerboseAction(
+            env.AutodetectUploadPort, "Looking for upload port...")] + bootloader_actions)
+    AlwaysBuild(target_bootloader)
 
 #
 # Setup default targets
