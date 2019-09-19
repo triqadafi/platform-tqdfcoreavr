@@ -204,6 +204,7 @@ def get_efuse(mcu, uart, bod):
 
 
 board = env.BoardConfig()
+platform = env.PioPlatform()
 
 # At the moment programming custom fuses is available for several cores
 if board.get("build.core", "") not in ("MiniCore", "MegaCore", "MightyCore"):
@@ -234,7 +235,9 @@ efuse = board.get("fuses.extended_fuses") if board.get(
 lock = board.get("fuses.lock", "0x3f")
 
 fuses_cmd = [
-    "avrdude", "$UPLOADERFLAGS",
+    "avrdude", "-p", "$BOARD_MCU", "-C",
+    join(platform.get_package_dir("tool-avrdude"), "avrdude.conf"),
+    "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS"
     "-Ulock:w:%s:m" % lock,
     "-Uhfuse:w:%s:m" % hfuse,
     "-Ulfuse:w:%s:m" % lfuse

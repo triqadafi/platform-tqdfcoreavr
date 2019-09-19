@@ -36,7 +36,11 @@ def get_suitable_optiboot_binary(board_config):
                 bootloader)
 
 
-common_flags = ["avrdude", "$UPLOADERFLAGS"]
+common_flags = [
+    "avrdude", "-p", "$BOARD_MCU", "-C",
+    join(platform.get_package_dir("tool-avrdude"), "avrdude.conf"),
+    "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS"
+]
 
 # Common for all bootloaders
 lock_bits = board.get("bootloader.lock_bits", "0x0F")
