@@ -220,8 +220,8 @@ uart = board.get("hardware.uart", "uart0").lower()
 eesave = board.get("hardware.eesave", "yes").lower()
 
 print("Target configuration:")
-print("Clock speed = %s, Oscillator = %s, BOD level = %s, UART port = %s, Save EEPROM = %s" % (
-    f_cpu, oscillator, bod, uart, eesave))
+print("Target = %s, Clock speed = %s, Oscillator = %s, BOD level = %s, UART port = %s, Save EEPROM = %s" % (
+    target, f_cpu, oscillator, bod, uart, eesave))
 
 lfuse = board.get("fuses.low_fuses") if board.get(
     "fuses.low_fuses", "") else hex(
@@ -234,8 +234,8 @@ efuse = board.get("fuses.extended_fuses") if board.get(
 lock = board.get("fuses.lock", "0x3f")
 
 fuses_cmd = [
-    "avrdude", "$UPLOADERFLAGS", "-b", "$UPLOAD_SPEED", "-P", '"$UPLOAD_PORT"',
-    "-e", "-Ulock:w:%s:m" % lock,
+    "avrdude", "$UPLOADERFLAGS",
+    "-Ulock:w:%s:m" % lock,
     "-Uhfuse:w:%s:m" % hfuse,
     "-Ulfuse:w:%s:m" % lfuse
 ]

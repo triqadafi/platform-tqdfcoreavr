@@ -36,10 +36,7 @@ def get_suitable_optiboot_binary(board_config):
                 bootloader)
 
 
-common_flags = [
-    "avrdude", "$UPLOADERFLAGS", "-b", "$UPLOAD_SPEED", "-e", "-P",
-    '"$UPLOAD_PORT"'
-]
+common_flags = ["avrdude", "$UPLOADERFLAGS"]
 
 # Common for all bootloaders
 lock_bits = board.get("bootloader.lock_bits", "0x0F")
@@ -86,7 +83,7 @@ if not isfile(bootloader_path):
     env.Exit(1)
 
 bootloader_flags = [
-    '-Uflash:w:"%s":i' % bootloader_path, "-Ulock:w:%s:m" % lock_bits]
+    "-e", '-Uflash:w:"%s":i' % bootloader_path, "-Ulock:w:%s:m" % lock_bits]
 
 bootloader_actions = [
     fuses_action,
