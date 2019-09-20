@@ -88,7 +88,8 @@ else:
         " ".join(common_flags + fuses_cmd), "Setting fuses")
 
 if not isfile(bootloader_path):
-    sys.stderr.write("Error: Couldn't find file %s\n" % bootloader_path)
+    sys.stderr.write(
+        "Error: Couldn't find bootloader image for %s\n" % env.subst("$BOARD"))
     env.Exit(1)
 
 bootloader_flags = [

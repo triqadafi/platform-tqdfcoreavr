@@ -207,34 +207,35 @@ def get_efuse(mcu, uart, bod):
 board = env.BoardConfig()
 platform = env.PioPlatform()
 
-# At the moment programming custom fuses is available for several cores
-if board.get("build.core", "") not in ("MiniCore", "MegaCore", "MightyCore"):
-    sys.stderr.write("Error: fuse programming for %s is not supported.\n" %
-                     env.subst("$BOARD"))
-    env.Exit(1)
-
 target = board.get("build.mcu").lower() if board.get(
     "build.mcu", "") else env.subst("$BOARD").lower()
-f_cpu = board.get("build.f_cpu", "16000000L").upper()
-oscillator = board.get("hardware.oscillator", "external").lower()
-bod = board.get("hardware.bod", "2.7v").lower()
-uart = board.get("hardware.uart", "uart0").lower()
-eesave = board.get("hardware.eesave", "yes").lower()
 
-print("Target configuration:")
-print("Target = %s, Clock speed = %s, Oscillator = %s, BOD level = %s, "
-      "UART port = %s, Save EEPROM = %s" %
-      (target, f_cpu, oscillator, bod, uart, eesave))
-
-lfuse = board.get("fuses.low_fuses") if board.get(
-    "fuses.low_fuses", "") else hex(
-    get_lfuse(target, f_cpu, oscillator, bod, eesave))
-hfuse = board.get("fuses.high_fuses") if board.get(
-    "fuses.high_fuses", "") else hex(
-    get_hfuse(target, uart, oscillator, bod, eesave))
-efuse = board.get("fuses.extended_fuses") if board.get(
-    "fuses.extended_fuses", "") else get_efuse(target, uart, bod)
+lfuse = board.get("fuses.lfuse", "")
+hfuse = board.get("fuses.hfuse", "")
+efuse = board.get("fuses.efuse", "")
 lock = board.get("fuses.lock", "0x3f")
+
+if (not lfuse or not hfuse) and board.get("build.core", "") not in (
+    "MiniCore", "MegaCore", "MightyCore"):
+    sys.stderr.write("Error: Dynamic fuses generation for %s is not supported."
+        " Please specify fuses in platformio.ini\n" % target)
+    env.Exit(1)
+
+if board.get("build.core", "") in ("MiniCore", "MegaCore", "MightyCore"):
+    f_cpu = board.get("build.f_cpu", "16000000L").upper()
+    oscillator = board.get("hardware.oscillator", "external").lower()
+    bod = board.get("hardware.bod", "2.7v").lower()
+    uart = board.get("hardware.uart", "uart0").lower()
+    eesave = board.get("hardware.eesave", "yes").lower()
+
+    print("Target configuration:")
+    print("Target = %s, Clock speed = %s, Oscillator = %s, BOD level = %s, "
+          "UART port = %s, Save EEPROM = %s" %
+          (target, f_cpu, oscillator, bod, uart, eesave))
+
+    lfuse = lfuse or hex(get_lfuse(target, f_cpu, oscillator, bod, eesave))
+    hfuse = hfuse or hex(get_hfuse(target, uart, oscillator, bod, eesave))
+    efuse = efuse or get_efuse(target, uart, bod)
 
 fuses_cmd = [
     "avrdude", "-p", "$BOARD_MCU", "-C",
