@@ -222,8 +222,9 @@ uart = board.get("hardware.uart", "uart0").lower()
 eesave = board.get("hardware.eesave", "yes").lower()
 
 print("Target configuration:")
-print("Target = %s, Clock speed = %s, Oscillator = %s, BOD level = %s, UART port = %s, Save EEPROM = %s" % (
-    target, f_cpu, oscillator, bod, uart, eesave))
+print("Target = %s, Clock speed = %s, Oscillator = %s, BOD level = %s, "
+      "UART port = %s, Save EEPROM = %s" %
+      (target, f_cpu, oscillator, bod, uart, eesave))
 
 lfuse = board.get("fuses.low_fuses") if board.get(
     "fuses.low_fuses", "") else hex(
