@@ -29,11 +29,14 @@ def get_suitable_optiboot_binary(board_config):
     mcu = board_config.get("build.mcu", "").lower()
     f_cpu = board_config.get("build.f_cpu", "16000000L").upper()
     uart = board_config.get("hardware.uart", "uart0").upper()
-    bootloader = join(
-        "%s" % mcu, "%s" % f_cpu, "optiboot_flash_%s_%s_%s_%s.hex" %
-        (mcu, uart, env.subst("$UPLOAD_SPEED"), f_cpu))
-    return join(FRAMEWORK_DIR, "bootloaders", "optiboot_flash", "bootloaders",
-                bootloader)
+    bootloader_file = "optiboot_flash_%s_%s_%s_%s.hex" % (
+        mcu, uart, env.subst("$UPLOAD_SPEED"), f_cpu)
+    bootloader_path = join(FRAMEWORK_DIR, "bootloaders", "optiboot_flash",
+        "bootloaders", "%s" % mcu, "%s" % f_cpu, bootloader_file)
+    if isfile(bootloader_path):
+        return bootloader_path
+
+    return bootloader_path.replace(".hex", "_BIGBOOT.hex")
 
 
 common_flags = [
