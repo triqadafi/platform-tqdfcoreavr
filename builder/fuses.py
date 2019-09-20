@@ -1,4 +1,5 @@
 import sys
+from os.path import join
 
 from SCons.Script import Import, Return
 
@@ -237,7 +238,7 @@ lock = board.get("fuses.lock", "0x3f")
 fuses_cmd = [
     "avrdude", "-p", "$BOARD_MCU", "-C",
     join(platform.get_package_dir("tool-avrdude"), "avrdude.conf"),
-    "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS"
+    "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS",
     "-Ulock:w:%s:m" % lock,
     "-Uhfuse:w:%s:m" % hfuse,
     "-Ulfuse:w:%s:m" % lfuse
