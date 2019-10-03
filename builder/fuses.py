@@ -204,7 +204,7 @@ def get_efuse(mcu, uart, bod):
         env.Exit(1)
 
 
-def get_lock_bits(target):
+def is_target_without_bootloader(target):
     targets_without_bootloader = (
         "atmega48", "atmega48p", "attiny4313", "attiny2313", "attiny1634",
         "attiny861", "attiny841", "attiny461", "attiny441", "attiny261",
@@ -213,10 +213,14 @@ def get_lock_bits(target):
         "attiny25", "attiny24", "attiny13", "attiny13a"
     )
 
-    if target in targets_without_bootloader:
-        return "0xFF"
+    return target in targets_without_bootloader
 
-    return "0x0F"
+
+def get_lock_bits(target):
+    if is_target_without_bootloader(target):
+        return "0xff"
+
+    return "0x0f"
 
 
 board = env.BoardConfig()
@@ -255,11 +259,17 @@ if board.get("build.core", "") in ("MiniCore", "MegaCore", "MightyCore"):
 fuses_cmd = [
     "avrdude", "-p", "$BOARD_MCU", "-C",
     join(platform.get_package_dir("tool-avrdude"), "avrdude.conf"),
-    "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS",
+    "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS"
+]
+
+if not is_target_without_bootloader(target):
+    fuses_cmd.append("-e")
+
+fuses_cmd.extend([
     "-Ulock:w:%s:m" % lock,
     "-Uhfuse:w:%s:m" % hfuse,
     "-Ulfuse:w:%s:m" % lfuse
-]
+])
 
 if efuse:
     efuse = efuse if isinstance(efuse, str) else hex(efuse)
