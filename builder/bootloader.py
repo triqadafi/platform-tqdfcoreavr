@@ -66,9 +66,9 @@ else:
             "Error: missing bootloader configuration!\n")
         env.Exit(1)
 
-    lfuse = board.get("bootloader.low_fuses", "")
-    hfuse = board.get("bootloader.high_fuses", "")
-    efuse = board.get("bootloader.extended_fuses", "")
+    lfuse = board.get("bootloader.lfuse", "")
+    hfuse = board.get("bootloader.hfuse", "")
+    efuse = board.get("bootloader.efuse", "")
 
     if not all(f for f in (lfuse, hfuse)):
         sys.stderr.write(

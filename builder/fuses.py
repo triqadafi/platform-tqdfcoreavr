@@ -204,6 +204,21 @@ def get_efuse(mcu, uart, bod):
         env.Exit(1)
 
 
+def get_lock_bits(target):
+    targets_without_bootloader = (
+        "atmega48", "atmega48p", "attiny4313", "attiny2313", "attiny1634",
+        "attiny861", "attiny841", "attiny461", "attiny441", "attiny261",
+        "attiny167", "attiny88", "attiny87", "attiny85", "attiny84",
+        "attiny48", "attiny45", "attiny44", "attiny43", "attiny40", "attiny26",
+        "attiny25", "attiny24", "attiny13", "attiny13a"
+    )
+
+    if target in targets_without_bootloader:
+        return "0xFF"
+
+    return "0x0F"
+
+
 board = env.BoardConfig()
 platform = env.PioPlatform()
 
@@ -213,7 +228,7 @@ target = board.get("build.mcu").lower() if board.get(
 lfuse = board.get("fuses.lfuse", "")
 hfuse = board.get("fuses.hfuse", "")
 efuse = board.get("fuses.efuse", "")
-lock = board.get("fuses.lock", "0x3f")
+lock = board.get("fuses.lock", get_lock_bits(target))
 
 if (not lfuse or not hfuse) and board.get("build.core", "") not in (
     "MiniCore", "MegaCore", "MightyCore"):
