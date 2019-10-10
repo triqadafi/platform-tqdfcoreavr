@@ -51,7 +51,7 @@
     "framework-arduino-avr-core13": {
       "type": "framework",
       "optional": true,
-      "version": "~0.22"
+      "version": "~0.0.22"
     },
     "framework-arduino-avr-digistump": {
       "type": "framework",
