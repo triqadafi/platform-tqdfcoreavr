@@ -15,7 +15,7 @@
 from platformio.public import PlatformBase
 
 
-class AtmelavrPlatform(PlatformBase):
+class TrqdfcoreavrPlatform(PlatformBase):
 
     def configure_default_packages(self, variables, targets):
         if not variables.get("board"):
@@ -33,6 +33,8 @@ class AtmelavrPlatform(PlatformBase):
                 framework_package = "framework-arduino-avr-digistump"
             elif build_core in ("tiny", "tinymodern"):
                 framework_package = "framework-arduino-avr-attiny"
+
+            framework_package = "framework-trqdfcore-avr-%s" % build_core.lower()
 
             self.frameworks["arduino"]["package"] = framework_package
             self.packages[framework_package]["optional"] = False

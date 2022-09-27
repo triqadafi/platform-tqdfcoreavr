@@ -1,8 +1,8 @@
 {
-  "name": "atmelavr",
-  "title": "Atmel AVR",
-  "description": "Atmel AVR 8-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industry's most code-efficient architecture for C and assembly programming",
-  "homepage": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
+  "name": "trqdfcoreavr",
+  "title": "TRQDFCore AVR",
+  "description": "TRQDFCore AVR is optimized framework for Triqadafi's Boards. Based on version 4.0.0 (atmelavr)",
+  "homepage": "https://triqada.fi/",
   "license": "Apache-2.0",
   "keywords": [
       "dev-platform",
@@ -16,16 +16,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/platformio/platform-atmelavr.git"
+    "url": "https://github.com/triqadafi/platform-trqdfcoreavr.git"
   },
-  "version": "4.0.0",
+  "version": "1.0.0",
   "frameworks": {
     "arduino": {
       "package": "framework-arduino-avr",
-      "script": "builder/frameworks/arduino.py"
+      "script": "builder/frameworks/arduino.py",
+      "description": "Arduino Wiring-based Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences",
+      "homepage": "http://arduino.cc/en/Reference/HomePage",
+      "title": "Arduino"
     }
   },
   "packages": {
+    "framework-trqdfcore-avr-minicore": {
+      "type": "framework",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~1.0.0"
+    },
     "toolchain-atmelavr": {
       "type": "toolchain",
       "owner": "platformio",
