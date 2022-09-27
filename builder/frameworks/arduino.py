@@ -116,6 +116,7 @@ env.Append(
 
     CPPPATH=[
         join(FRAMEWORK_DIR, "cores", build_core)
+        join(FRAMEWORK_DIR, "cores", "MCUdude_corefiles")
     ]
 )
 
@@ -180,7 +181,8 @@ if "build.variant" in board:
 
 libs.append(env.BuildLibrary(
     join("$BUILD_DIR", "FrameworkArduino"),
-    join(FRAMEWORK_DIR, "cores", build_core)
+    join(FRAMEWORK_DIR, "cores", build_core),
+    join(FRAMEWORK_DIR, "cores", "MCUdude_corefiles")
 ))
 
 env.Prepend(LIBS=libs)
