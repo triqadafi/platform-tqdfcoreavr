@@ -40,7 +40,7 @@ elif build_core != "arduino":
     FRAMEWORK_DIR = platform.get_package_dir(
         "framework-arduino-avr-%s" % build_core.lower())
 
-FRAMEWORK_DIR = platform.get_package_dir("framework-trqdfcore-avr-%s" % build_core.lower())
+FRAMEWORK_DIR = platform.get_package_dir("framework-tqdfcore-avr-%s" % build_core.lower())
 
 assert isdir(FRAMEWORK_DIR)
 

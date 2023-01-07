@@ -1,12 +1,12 @@
 {
   "type": "platform", 
-  "name": "trqdfcoreavr", 
+  "name": "tqdfcoreavr", 
   "version": "1.0.0", 
   "spec": {
     "owner": null, 
     "id": null, 
-    "name": "platform-trqdfcoreavr", 
+    "name": "platform-tqdfcoreavr", 
     "requirements": null, 
-    "uri": "https://github.com/triqadafi/platform-trqdfcoreavr.git"
+    "uri": "https://github.com/triqadafi/platform-tqdfcoreavr.git"
   }
 }

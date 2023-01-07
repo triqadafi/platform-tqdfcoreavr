@@ -18,7 +18,7 @@
   "frameworks": [
     "arduino"
   ],
-  "name": "Watch mk4.x - 8MHz",
+  "name": "TQDF Watch mk4.X - 8MHz",
   "upload": {
     "maximum_ram_size": 2048,
     "maximum_size": 32768,
@@ -27,5 +27,5 @@
     "speed": 38400
   },
   "url": "https://www.microchip.com/wwwproducts/en/ATmega328P",
-  "vendor": "TRQDF"
+  "vendor": "TQDF"
 }

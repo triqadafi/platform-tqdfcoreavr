@@ -34,7 +34,7 @@ class TrqdfcoreavrPlatform(PlatformBase):
             elif build_core in ("tiny", "tinymodern"):
                 framework_package = "framework-arduino-avr-attiny"
 
-            framework_package = "framework-trqdfcore-avr-%s" % build_core.lower()
+            framework_package = "framework-tqdfcore-avr-%s" % build_core.lower()
 
             self.frameworks["arduino"]["package"] = framework_package
             self.packages[framework_package]["optional"] = False
