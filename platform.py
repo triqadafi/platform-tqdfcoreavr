@@ -15,7 +15,7 @@
 from platformio.public import PlatformBase
 
 
-class TrqdfcoreavrPlatform(PlatformBase):
+class TqdfcoreavrPlatform(PlatformBase):
 
     def configure_default_packages(self, variables, targets):
         if not variables.get("board"):
